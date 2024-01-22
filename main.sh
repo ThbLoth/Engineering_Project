@@ -15,3 +15,10 @@ pub_key_on_server=$(./card_keys.sh)
 if [ $? -eq 1 ]; then
     echo "Clé publique de la carte copiée sur le serveur, prêt pour génération et échange de la clé symétrique"
 fi
+
+#Génération de la clé symétrique et vérification
+
+sym_key=$(./symetric_key.sh)
+if [ $? -eq 1 ]; then
+    echo "Clé symétrique générée avec succès"
+fi
