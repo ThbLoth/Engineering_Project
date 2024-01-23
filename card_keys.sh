@@ -18,13 +18,13 @@ ssh -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host" "$remote_command"
 
 # Vérifier le code de retour de la commande SSH
 if [ $? -eq 0 ]; then
-    echo "Commande à distance exécutée avec succès sur B (Carte)"
+    #echo "Commande à distance exécutée avec succès sur B (Carte)"
 else
     exit 0  # Quitter le script en cas d'échec
 fi
 
 # Copier la clé publique depuis B (Carte) vers A
-scp -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host:/home/$remote_user/public_key.pem" "/home/$server_user/Bureau"
+scp -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host:/home/$remote_user/public_key.pem" "/home/$server_user"
 
 # Vérifier le code de retour de la commande SCP
 if [ $? -eq 0 ]; then
