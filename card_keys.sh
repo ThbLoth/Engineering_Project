@@ -18,7 +18,7 @@ ssh -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host" "$remote_command"
 
 # Vérifier le code de retour de la commande SSH
 if [ $? -eq 0 ]; then
-    #echo "Commande à distance exécutée avec succès sur B (Carte)"
+    echo "Commande à distance exécutée avec succès sur B (Carte)"
 else
     exit 0  # Quitter le script en cas d'échec
 fi
