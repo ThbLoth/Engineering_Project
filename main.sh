@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Utiliser ping_check avec une adresse IP spécifique
-result_ping=$(./ping_check.sh 192.168.78.131)
+result_ping=$(./ping_check.sh 192.168.139.132)
 
 
 # Vérifier le code de retour de ping_check.sh

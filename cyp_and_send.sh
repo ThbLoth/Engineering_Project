@@ -1,20 +1,23 @@
 #!/bin/bash
 
 # Spécifiez le nom d'utilisateur et l'adresse IP du serveur distant B (Carte)
-remote_user="cardb"
-remote_host="192.168.78.131"
+remote_user="carteb"
+remote_host="192.168.139.132"
+
+server_user="servera"
+server_host="192.168.139.131"
 
 # Spécifiez le chemin du fichier pour la clé symétrique
-symmetric_key_file="/home/servera/symmetric_key.bin"
+symmetric_key_file="/home/$server_user/symmetric_key.bin"
 
 # Spécifiez le chemin du fichier de sortie pour la clé symétrique chiffrée
-encrypted_symmetric_key_file="/home/servera/encrypted_symmetric_key.bin"
+encrypted_symmetric_key_file="/home/$server_user/encrypted_symmetric_key.bin"
 
 # Spécifiez le chemin du fichier de sortie pour le résultat de la commande à distance
 output_file="output_encrypt_and_send.txt"
 
 # Spécifiez le chemin complet de la clé publique à utiliser
-public_key_path="/home/servera/public_key.pem"
+public_key_path="/home/$server_user/public_key.pem"
 
 # Chiffrer la clé symétrique avec la clé publique
 openssl rsautl -encrypt -inkey "$public_key_path" -pubin -in "$symmetric_key_file" -out "$encrypted_symmetric_key_file"
@@ -39,7 +42,7 @@ else
 fi
 
 # Connexion SSH avec clé privée depuis A vers B pour déchiffrer la clé symétrique
-ssh -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host" "
+ssh -i /home/$server_user/.ssh/id_rsa "$remote_user@$remote_host" "
     openssl rsautl -decrypt -inkey /home/$remote_user/private_key.pem -passin pass:passphrase -in /home/$remote_user/encrypted_symmetric_key.bin -out /home/$remote_user/symmetric_key.bin
 "
 
@@ -51,7 +54,7 @@ if [ $? -eq 0 ]; then
     rm "$public_key_path" "$encrypted_symmetric_key_file"
 
     #Clean up sur B
-    ssh -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host" "
+    ssh -i /home/$server_user/.ssh/id_rsa "$remote_user@$remote_host" "
         rm /home/$remote_user/public_key.pem /home/$remote_user/encrypted_symmetric_key.bin /home/$remote_user/private_key.pem
     "
 

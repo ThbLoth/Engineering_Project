@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Spécifiez le nom d'utilisateur et l'adresse IP du serveur distant B (Carte)
-remote_user="cardb"
-remote_host="192.168.78.131"
+remote_user="carteb"
+remote_host="192.168.139.132"
 
 server_user="servera"
-server_host="192.168.78.130"
+server_host="192.168.139.131"
 
 # Commande à exécuter à distance sur B (Carte)
 remote_command="
@@ -14,7 +14,7 @@ remote_command="
 "
 
 # Connexion SSH avec clé privée depuis A vers B
-ssh -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host" "$remote_command"
+ssh -i /home/$server_user/.ssh/id_rsa "$remote_user@$remote_host" "$remote_command"
 
 # Vérifier le code de retour de la commande SSH
 if [ $? -eq 0 ]; then
@@ -24,7 +24,7 @@ else
 fi
 
 # Copier la clé publique depuis B (Carte) vers A
-scp -i /home/servera/.ssh/id_rsa "$remote_user@$remote_host:/home/$remote_user/public_key.pem" "/home/$server_user"
+scp -i /home/$server_user/.ssh/id_rsa "$remote_user@$remote_host:/home/$remote_user/public_key.pem" "/home/$server_user"
 
 # Vérifier le code de retour de la commande SCP
 if [ $? -eq 0 ]; then

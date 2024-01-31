@@ -1,5 +1,7 @@
 #!/bin/bash
 
+server_user="servera"
+
 # Spécifiez le chemin du fichier pour la clé symétrique
 symmetric_key_file="/home/servera/symmetric_key.bin"
 
