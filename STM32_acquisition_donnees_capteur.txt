@@ -1,0 +1,86 @@
+(Définir les pins PA9 pour Echo_capt1, PA8 pour Trig_capt1, PA10 pour Trig_capt2 et PA11 pour Echo_capt2, PA2 ou USART_TX et PA3 pour USART_RX
+
+#include <string.h>
+#include <stdio.h>
+
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_TIM4_Init(void);
+static void MX_USART2_UART_Init(void);
+void usDelay(uint32_t uSec);
+
+//Speed of sound in cm/usec
+const float speedOfSound = 0.0343/2;
+float distance;
+
+int main(void)
+{
+	uint32_t numTicks_1 = 0;
+	uint32_t numTicks_2 = 0;
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_TIM4_Init();
+  MX_USART2_UART_Init();
+
+
+  /* Infinite loop */
+  while (1)
+  {
+
+		//Set TRIG to LOW for few uSec
+		HAL_GPIO_WritePin(TRIG_GPIO_Port, TRIG_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(TRIG_GPIO_Port, TRIG_Pin, GPIO_PIN_RESET);
+		usDelay(3);
+		
+		//*** START Ultrasonic measure routine ***//
+		//1. Output 10 usec TRIG
+		HAL_GPIO_WritePin(TRIG_1_GPIO_Port, TRIG_1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(TRIG_2_GPIO_Port, TRIG_2_Pin, GPIO_PIN_SET);
+		usDelay(10);
+		HAL_GPIO_WritePin(TRIG_1_GPIO_Port, TRIG_1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(TRIG_2_GPIO_Port, TRIG_2_Pin, GPIO_PIN_RESET);
+		
+		//2. Wait for ECHO pin rising edge
+		while(HAL_GPIO_ReadPin(ECHO_1_GPIO_Port, ECHO_1_Pin) == GPIO_PIN_RESET);
+		while(HAL_GPIO_ReadPin(ECHO_2_GPIO_Port, ECHO_2_Pin) == GPIO_PIN_RESET);
+		
+		//3. Start measuring ECHO_1 pulse width in usec
+		numTicks_1 = 0;
+		while(HAL_GPIO_ReadPin(ECHO_1_GPIO_Port, ECHO_1_Pin) == GPIO_PIN_SET)
+		{
+			numTicks_1++;
+			usDelay(2); //2.8usec
+		};
+		
+		//4. Estimate distance_1 in cm
+		distance_1 = (numTicks_1 + 0.0f)*2.8*speedOfSound;
+
+
+		//5. Start measuring ECHO_2 pulse width in usec
+		numTicks_2 = 0;
+		while(HAL_GPIO_ReadPin(ECHO_2_GPIO_Port, ECHO_2_Pin) == GPIO_PIN_SET)
+		{
+			numTicks_2++;
+			usDelay(2); //2.8usec
+		};
+		
+		//6. Estimate distance_2 in cm
+		distance_2 = (numTicks_2 + 0.0f)*2.8*speedOfSound;
+		
+		//7. Print to UART terminal for debugging
+		sprintf(uartBuf, "Distance (cm) capteur 1  = %.1f\r\n", distance_1);
+		sprintf(uartBuf, "Distance (cm) capteur 2 = %.1f\r\n", distance_2);
+		HAL_UART_Transmit(&huart2, (uint8_t *)uartBuf, strlen(uartBuf), 100);
+		
+		HAL_Delay(1000);
+		
+  }
+}
