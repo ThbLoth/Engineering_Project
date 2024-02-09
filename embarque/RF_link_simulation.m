@@ -38,7 +38,7 @@ Rb=80;
 Tb=1/Rb;
 
 %% MODULATION
-f=10*Rb; % Hz 
+f=20*Rb; % Hz 
 Ts=1/f;
 ph=0;
 
@@ -133,9 +133,9 @@ signalRX = signalTX + wgn(size(signalTX, 1), size(signalTX, 2), Pnoise, 'linear'
 if PLOT_FIGURES
     figure(3)
     subplot(2,1,1);
-    plot(time,signalTX, 'b'); hold all;
+    %plot(time,signalTX, 'b'); hold all;
     plot(time,signalRX, 'r'); hold all;
-    plot(time,Digital_signal,'k','LineWidth',2); hold all;
+    %plot(time,Digital_signal,'k','LineWidth',2); hold all;
     xlabel('Time (bit period)');
     ylabel('Amplitude');
     
